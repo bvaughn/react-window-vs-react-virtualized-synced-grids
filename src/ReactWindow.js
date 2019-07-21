@@ -1,10 +1,10 @@
-import React, { Fragment, useRef } from "react";
-import { FixedSizeGrid as Grid } from "react-window";
+import React, { Fragment, memo, useEffect, useRef } from "react";
+import { FixedSizeGrid as Grid, areEqual } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 
 import "./shared.css";
 
-const Cell = ({ columnIndex, rowIndex, style }) => (
+const Cell = memo(({ columnIndex, rowIndex, style }) => (
   <div
     className={
       columnIndex % 2
@@ -19,44 +19,63 @@ const Cell = ({ columnIndex, rowIndex, style }) => (
   >
     r{rowIndex}, c{columnIndex}
   </div>
-);
+), areEqual);
+
+const MultiGrid = ({ height, width }) => {
+  const activeGridRef = useRef();
+  const passiveGridRef = useRef();
+
+  useEffect(() => {
+    const current = activeGridRef.current;
+    const onScroll = event => {
+      passiveGridRef.current.scrollTo({
+        scrollTop: event.currentTarget.scrollTop
+      });
+    };
+    current.addEventListener('scroll', onScroll);
+    return () => current.removeEventListener('scroll', onScroll);
+  });
+
+  return (
+    <Fragment>
+      <Grid
+        className="Grid"
+        columnCount={2}
+        columnWidth={100}
+        height={height}
+        overscanColumnCount={1}
+        overscanRowCount={1}
+        ref={passiveGridRef}
+        rowCount={1000}
+        rowHeight={35}
+        width={200}
+      >
+        {Cell}
+      </Grid>
+      <Grid
+        className="Grid"
+        columnCount={998}
+        columnWidth={100}
+        height={height}
+        overscanColumnCount={1}
+        overscanRowCount={1}
+        outerRef={activeGridRef}
+        rowCount={1000}
+        rowHeight={35}
+        style={{ position: 'absolute', left: 200, top: 0 }}
+        width={width - 200}
+      >
+        {Cell}
+      </Grid>
+    </Fragment>
+  );
+};
 
 const Example = () => {
-  const fixedGridRef = useRef();
   return (
     <AutoSizer>
       {({ height, width }) => (
-        <Fragment>
-          <Grid
-            className="Grid"
-            columnCount={2}
-            columnWidth={100}
-            height={height}
-            overscanColumnCount={1}
-            overscanRowCount={1}
-            ref={fixedGridRef}
-            rowCount={1000}
-            rowHeight={35}
-            width={200}
-          >
-            {Cell}
-          </Grid>
-          <Grid
-            className="Grid"
-            columnCount={998}
-            columnWidth={100}
-            height={height}
-            onScroll={({ scrollTop }) => fixedGridRef.current.scrollTo({ scrollTop })}
-            overscanColumnCount={1}
-            overscanRowCount={1}
-            rowCount={1000}
-            rowHeight={35}
-            style={{ position: 'absolute', left: 200, top: 0 }}
-            width={width - 200}
-          >
-            {Cell}
-          </Grid>
-        </Fragment>
+        <MultiGrid height={height} width={width} />
       )}
     </AutoSizer>
   );
