@@ -24,7 +24,14 @@ const Cell = memo(({ columnIndex, rowIndex, style }) => (
 const MultiGrid = ({ height, width }) => {
   const passiveGridRef = useRef();
 
-  const onScroll = event => {
+  // NOTE This callback requires patching react-window.
+  // Add the following to Grid's _onScroll() method:
+  //   if (typeof this.props.onScrollNative === 'function') {
+  //     this.props.onScrollNative(event);
+  //   }
+  //
+  // It seems promising though; maybe I should change the default onScroll timing?
+  const onScrollNative = event => {
     passiveGridRef.current.scrollTo({
       scrollTop: event.currentTarget.scrollTop
     });
@@ -51,7 +58,7 @@ const MultiGrid = ({ height, width }) => {
         columnCount={998}
         columnWidth={100}
         height={height}
-        onScrollNative={onScroll}
+        onScrollNative={onScrollNative}
         overscanColumnCount={1}
         overscanRowCount={1}
         rowCount={1000}
