@@ -1,26 +1,30 @@
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import ReactVirtualized from './ReactVirtualized';
+import ReactWindow from './ReactWindow';
 import './App.css';
 
-function App() {
+const Menu = () => (
+  <nav>
+    <ul>
+      <li>
+        <Link to="/react-window">react-window</Link>
+      </li>
+      <li>
+        <Link to="/react-virtualized">react-virtualized</Link>
+      </li>
+    </ul>
+  </nav>
+);
+
+function AppRouter() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Route path="/" exact component={Menu} />
+      <Route path="/react-window" component={ReactWindow} />
+      <Route path="/react-virtualized" component={ReactVirtualized} />
+    </Router>
   );
 }
 
-export default App;
+export default AppRouter;
