@@ -1,4 +1,4 @@
-import React, { Fragment, memo, useRef } from "react";
+import React, { Fragment, memo, useEffect, useRef } from "react";
 import { FixedSizeGrid as Grid, areEqual } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 
@@ -23,6 +23,11 @@ const Cell = memo(({ columnIndex, rowIndex, style }) => (
 
 const MultiGrid = ({ height, width }) => {
   const passiveGridRef = useRef();
+  const scrollRef = useRef();
+
+  useEffect(() => {
+    window.registerScrollTarget(scrollRef.current);
+  }, []);
 
   // NOTE This callback requires patching react-window.
   // Add the following to Grid's _onScroll() method:
@@ -49,6 +54,7 @@ const MultiGrid = ({ height, width }) => {
         ref={passiveGridRef}
         rowCount={1000}
         rowHeight={35}
+        style={{overflow: 'hidden'}}
         width={200}
       >
         {Cell}
@@ -59,6 +65,7 @@ const MultiGrid = ({ height, width }) => {
         columnWidth={100}
         height={height}
         onScrollNative={onScrollNative}
+        outerRef={scrollRef}
         overscanColumnCount={1}
         overscanRowCount={1}
         rowCount={1000}
@@ -72,14 +79,12 @@ const MultiGrid = ({ height, width }) => {
   );
 };
 
-const Example = () => {
-  return (
-    <AutoSizer>
-      {({ height, width }) => (
-        <MultiGrid height={height} width={width} />
-      )}
-    </AutoSizer>
-  );
-}
+const Example = () => (
+  <AutoSizer>
+    {({ height, width }) => (
+      <MultiGrid height={height} width={width} />
+    )}
+  </AutoSizer>
+);
 
 export default Example;

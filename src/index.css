@@ -13,3 +13,19 @@ body,
 #root {
   height: 100%;
 }
+
+#spinner {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+#samples {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: #fff;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #f8f8f0;
+}
