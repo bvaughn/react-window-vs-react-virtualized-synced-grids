@@ -1,4 +1,4 @@
-import React, { Fragment, memo, useEffect, useRef } from "react";
+import React, { Fragment, memo, useRef } from "react";
 import { FixedSizeGrid as Grid, areEqual } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 
@@ -22,19 +22,13 @@ const Cell = memo(({ columnIndex, rowIndex, style }) => (
 ), areEqual);
 
 const MultiGrid = ({ height, width }) => {
-  const activeGridRef = useRef();
   const passiveGridRef = useRef();
 
-  useEffect(() => {
-    const current = activeGridRef.current;
-    const onScroll = event => {
-      passiveGridRef.current.scrollTo({
-        scrollTop: event.currentTarget.scrollTop
-      });
-    };
-    current.addEventListener('scroll', onScroll);
-    return () => current.removeEventListener('scroll', onScroll);
-  });
+  const onScroll = event => {
+    passiveGridRef.current.scrollTo({
+      scrollTop: event.currentTarget.scrollTop
+    });
+  };
 
   return (
     <Fragment>
@@ -57,9 +51,9 @@ const MultiGrid = ({ height, width }) => {
         columnCount={998}
         columnWidth={100}
         height={height}
+        onScrollNative={onScroll}
         overscanColumnCount={1}
         overscanRowCount={1}
-        outerRef={activeGridRef}
         rowCount={1000}
         rowHeight={35}
         style={{ position: 'absolute', left: 200, top: 0 }}
